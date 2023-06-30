@@ -18,7 +18,8 @@ class King(ChessPiece):
         return row_diff <= 1 and col_diff <= 1 and (board[end_row][end_col] is None or board[end_row][end_col].color != self.color)
     
     def __str__(self):
-         
+         return "♔" if self.color == "white" else "♚"
+
 
 class Queen(ChessPiece):
     def can_move(self, start, end, board):
@@ -29,6 +30,7 @@ class Queen(ChessPiece):
         return (start_row == end_row or start_col == end_col or row_diff == col_diff) and (board[end_row][end_col] is None or board[end_row][end_col].color != self.color)
 
     def __str__(self):
+        return "♕" if self.color == "white" else "♛"
 
 
 class Bishop(ChessPiece):
@@ -38,8 +40,9 @@ class Bishop(ChessPiece):
         row_diff = abs(start_row - end_row)
         col_diff = abs(start_col - end_col)
         return row_diff == col_diff and (board[end_row][end_col] is None or board[end_row][end_col].color != self.color)
-    
+   
     def __str__(self):
+        return "♗" if self.color == "white" else "♝"
 
 
 class Rook(ChessPiece):
@@ -49,6 +52,7 @@ class Rook(ChessPiece):
         return start_row == end_row or start_col == end_col and (board[end_row][end_col] is None or board[end_row][end_col].color != self.color)
 
     def __str__(self):
+        return "♖" if self.color == "white" else "♜"
 
 
 class Knight(ChessPiece):
@@ -60,6 +64,7 @@ class Knight(ChessPiece):
         return (row_diff == 2 and col_diff == 1) or (row_diff == 1 and col_diff == 2) and (board[end_row][end_col] is None or board[end_row][end_col].color != self.color)
      
     def __str__(self):
+        return "♘" if self.color == "white" else "♞"
 
 
 class Pawn(ChessPiece):
@@ -86,3 +91,11 @@ class Pawn(ChessPiece):
         return False
 
     def __str__(self):
+         return "♙" if self.color == "white" else "♟"
+    
+class Chessboard:
+    def __init__(self):
+
+    
+     def initialize_pieces(self):
+         
