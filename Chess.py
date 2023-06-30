@@ -99,7 +99,7 @@ class Chessboard:
         self.initialize_pieces()
     
     def initialize_pieces(self):
-        
+
         self.board[0][4] = King("white")
         self.board[7][4] = King("black")
         self.board[0][3] = Queen("white")
@@ -122,3 +122,9 @@ class Chessboard:
 
         self.board[1] = [Pawn("white") for _ in range(8)]
         self.board[6] = [Pawn("black") for _ in range(8)]
+
+        for row in range(8):
+            for col in range(8):
+                piece = self.board[row][col]
+                if piece:
+                    piece.position = (row, col)
