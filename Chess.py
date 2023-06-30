@@ -128,3 +128,24 @@ class Chessboard:
                 piece = self.board[row][col]
                 if piece:
                     piece.position = (row, col)
+                    
+    def move_piece(self, start, end):
+        piece = self.board[start[0]][start[1]]
+        if piece and piece.can_move(start, end, self.board):
+            self.board[end[0]][end[1]] = piece
+            self.board[start[0]][start[1]] = None
+            piece.position = end
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        board_str = ""
+        for row in self.board:
+            for piece in row:
+                if piece:
+                    board_str += str(piece) + " "
+                else:
+                    board_str += "- "
+            board_str += "\n"
+        return board_str
