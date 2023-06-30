@@ -63,8 +63,26 @@ class Knight(ChessPiece):
 
 
 class Pawn(ChessPiece):
-    def can_move(self, start, end, board):
-        
 
+    def __init__(self, color):
+        super().__init__(color)
+        self.has_moved = False
+
+    def can_move(self, start, end, board):
+        start_row, start_col = start
+        end_row, end_col = end
+        direction = 1 if self.color == "white" else -1
+
+        if start_col == end_col and start_row + direction == end_row and board[end_row][end_col] is None:
+            return True
+
+        if abs(start_col - end_col) == 1 and start_row + direction == end_row:
+            target_piece = board[end_row][end_col]
+            return target_piece and target_piece.color != self.color
+
+        if not self.has_moved and start_col == end_col and start_row + 2 * direction == end_row and board[end_row][end_col] is None:
+            return True
+
+        return False
 
     def __str__(self):
