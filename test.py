@@ -57,14 +57,15 @@ class ChessGameTest(unittest.TestCase):
         self.board.board[0][0] = None
         self.board.board[1][0] = None
         self.board.board[1][6] = None
+
         self.assertFalse(self.board.move_piece((2, 0), (3, 0)))  # Invalid move (obstructed by own piece)
 
         self.assertTrue(self.board.move_piece((2, 0), (2, 4)))  # Valid move
+
         self.assertIsInstance(self.board.board[2][4], Rook)
         self.assertIsNone(self.board.board[2][0])
 
         self.assertFalse(self.board.move_piece((2, 4), (1, 4)))  # Invalid move (obstructed by own piece)
-
         self.assertTrue(self.board.move_piece((7,1), (5,2)))
         self.assertTrue(self.board.move_piece((0,5), (1,6)))
         self.assertFalse(self.board.move_piece((0,2), (1,3)))

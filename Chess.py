@@ -239,7 +239,7 @@ class GameController:
             print(self.board)
             print(f"It's {self.current_player}'s turn.")
             start = self.get_input("Enter the starting position (row, column): ")
-            if not self.board.board[start[0]][start[1]] or self.board.board[start[0]][start[1]].color != self.current_player:
+            if self.board.board[start[0]][start[1]] and self.board.board[start[0]][start[1]].color != self.current_player:
                 print("Invalid move. Try again.")
                 continue
             end = self.get_input("Enter the ending position (row, column): ")
