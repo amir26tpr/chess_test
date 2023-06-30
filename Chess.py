@@ -128,3 +128,26 @@ class Chessboard:
                 piece = self.board[row][col]
                 if piece:
                     piece.position = (row, col)
+
+
+class GameController:
+    def __init__(self):
+        self.board = Chessboard()
+        self.current_player = "white"
+
+    def play(self):
+        while True:
+            print()
+            print(self.board)
+            print(f"It's {self.current_player}'s turn.")
+            start = self.get_input("Enter the starting position (row, column): ")
+            end = self.get_input("Enter the ending position (row, column): ")
+
+            if self.board.move_piece(start, end):
+                if self.current_player == "white":
+                    self.current_player = "black"
+                else:
+                    self.current_player = "white"
+
+            else:
+                print("Invalid move. Try again.")
