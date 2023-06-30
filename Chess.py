@@ -179,8 +179,8 @@ class Chessboard:
                 if 0 <= new_row < 8 and 0 <= new_col < 8:
                     if king_piece.can_move(king_position, (new_row, new_col), self.board):
                         new_check = False
-                        for row in self.board:
-                            for piece in row:
+                        for row_check in self.board:
+                            for piece in row_check:
                                 if piece and piece.color != color:
                                     if piece.can_move(piece.position, (new_row, new_col), self.board):
                                         new_check = True
