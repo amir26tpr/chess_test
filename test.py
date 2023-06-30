@@ -6,6 +6,7 @@ class ChessGameTest(unittest.TestCase):
         self.game = GameController()
 
     def test_initial_board_setup(self):
+        # Test the initial setup of the chessboard
         board = self.game.board.board
         self.assertIsInstance(board[0][4], King)
         self.assertIsInstance(board[7][4], King)
@@ -60,3 +61,14 @@ class ChessGameTest(unittest.TestCase):
         self.assertTrue(self.board.move_piece((2, 0), (2, 4)))  # Valid move
         self.assertIsInstance(self.board.board[2][4], Rook)
         self.assertIsNone(self.board.board[2][0])
+        
+        self.assertFalse(self.board.move_piece((2, 4), (1, 4)))  # Invalid move (obstructed by own piece)
+
+        self.assertTrue(self.board.move_piece((7,1), (5,2)))
+        self.assertTrue(self.board.move_piece((0,5), (1,6)))
+        self.assertFalse(self.board.move_piece((0,2), (1,3)))
+        self.assertFalse(self.board.move_piece((7,3), (6,3)))
+
+
+if __name__ == '__main__':
+    unittest.main()
