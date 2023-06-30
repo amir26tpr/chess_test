@@ -14,11 +14,13 @@ class ChessPiece:
 class King(ChessPiece):
     def can_move(self, start, end, board):
         # Logic to determine if the king can move from 'start' to 'end'
+        if start == end:
+            return False
         start_row, start_col = start
         end_row, end_col = end
         row_diff = abs(start_row - end_row)
         col_diff = abs(start_col - end_col)
-        return row_diff <= 1 and col_diff <= 1 and (board[end_row][end_col] is None or board[end_row][end_col].color != self.color)
+        return row_diff <= 1 and col_diff <= 1 and row_diff+col_diff >= 1 and (board[end_row][end_col] is None or board[end_row][end_col].color != self.color)
 
     def __str__(self):
         return "♔" if self.color == "white" else "♚"
@@ -27,6 +29,8 @@ class King(ChessPiece):
 class Queen(ChessPiece):
     def can_move(self, start, end, board):
         # Logic to determine if the queen can move from 'start' to 'end'
+        if start == end:
+            return False
         start_row, start_col = start
         end_row, end_col = end
         row_diff = abs(start_row - end_row)
@@ -40,6 +44,8 @@ class Queen(ChessPiece):
 class Bishop(ChessPiece):
     def can_move(self, start, end, board):
         # Logic to determine if the bishop can move from 'start' to 'end'
+        if start == end:
+            return False
         start_row, start_col = start
         end_row, end_col = end
         row_diff = abs(start_row - end_row)
@@ -53,6 +59,8 @@ class Bishop(ChessPiece):
 class Rook(ChessPiece):
     def can_move(self, start, end, board):
         # Logic to determine if the rook can move from 'start' to 'end'
+        if start == end:
+            return False
         start_row, start_col = start
         end_row, end_col = end
         return start_row == end_row or start_col == end_col and (board[end_row][end_col] is None or board[end_row][end_col].color != self.color)
@@ -64,6 +72,8 @@ class Rook(ChessPiece):
 class Knight(ChessPiece):
     def can_move(self, start, end, board):
         # Logic to determine if the knight can move from 'start' to 'end'
+        if start == end:
+            return False
         start_row, start_col = start
         end_row, end_col = end
         row_diff = abs(start_row - end_row)
@@ -77,22 +87,28 @@ class Knight(ChessPiece):
 class Pawn(ChessPiece):
     def __init__(self, color):
         super().__init__(color)
-        self.has_moved = False
+        self._has_moved = False
 
     def can_move(self, start, end, board):
         # Logic to determine if the pawn can move from 'start' to 'end'
+        if start == end:
+            return False
         start_row, start_col = start
         end_row, end_col = end
         direction = 1 if self.color == "white" else -1
 
         if start_col == end_col and start_row + direction == end_row and board[end_row][end_col] is None:
+            self._has_moved = True
             return True
 
         if abs(start_col - end_col) == 1 and start_row + direction == end_row:
             target_piece = board[end_row][end_col]
-            return target_piece and target_piece.color != self.color
+            if target_piece and target_piece.color != self.color:
+                self._has_moved = True
+                return True
 
-        if not self.has_moved and start_col == end_col and start_row + 2 * direction == end_row and board[end_row][end_col] is None:
+        if not self._has_moved and start_col == end_col and start_row + 2 * direction == end_row and board[end_row][end_col] is None:
+            self._has_moved = True
             return True
 
         return False
@@ -148,6 +164,96 @@ class Chessboard:
         else:
             return False
 
+    def is_checkmate(self, color):
+        # Check if the current player is in checkmate
+        if not self.is_check(color):
+            return False
+        king_position = self.find_king(color)
+        king_piece = self.find_king_piece(color)
+
+        # Check if the king can move out of check
+        for row in range(-1, 2):
+            for col in range(-1, 2):
+                new_row = king_position[0] + row
+                new_col = king_position[1] + col
+                if 0 <= new_row < 8 and 0 <= new_col < 8:
+                    if king_piece.can_move(king_position, (new_row, new_col), self.board):
+                        new_check = False
+                        for row in self.board:
+                            for piece in row:
+                                if piece and piece.color != color:
+                                    if piece.can_move(piece.position, (new_row, new_col), self.board):
+                                        new_check = True
+                                        break
+                            if new_check:
+                                break
+        return True
+
+    def is_stalemate(self, color):
+        # Check if the current player is in stalemate
+        if self.is_check(color):
+            return False
+        king_position = self.find_king(color)
+        king_piece = self.find_king_piece(color)
+
+        # Check if the king can move out of stalemate
+        for row in range(-1, 2):
+            for col in range(-1, 2):
+                new_row = king_position[0] + row
+                new_col = king_position[1] + col
+                if 0 <= new_row < 8 and 0 <= new_col < 8:
+                    if king_piece.can_move(king_position, (new_row, new_col), self.board):
+                        for row in self.board:
+                            for piece in row:
+                                if piece and piece.color != color:
+                                    if not piece.can_move(piece.position, (new_row, new_col), self.board):
+                                        return False
+                            return False
+
+        # Check if any piece can move legally
+        for row in self.board:
+            for piece in row:
+                if piece and piece.color == color:
+                    for row in range(8):
+                        for col in range(8):
+                            if piece.can_move(piece.position, (row, col), self.board):
+                                current_piece = self.board[row][col]
+                                self.board[row][col] = piece
+                                self.board[piece.position[0]][piece.position[1]] = None
+                                if not self.is_check(color):
+                                    self.board[row][col] = current_piece
+                                    self.board[piece.position[0]][piece.position[1]] = piece
+                                    return False
+                                self.board[row][col] = current_piece
+                                self.board[piece.position[0]][piece.position[1]] = piece
+
+        return True
+
+    def is_check(self, color):
+        # Check if the current player is in check
+        king_position = self.find_king(color)
+        for row in self.board:
+            for piece in row:
+                if piece and piece.color != color:
+                    if piece.can_move(piece.position, king_position, self.board):
+                        return True
+        return False
+
+    def find_king(self, color):
+        # Find the position of the king
+        for row in range(8):
+            for col in range(8):
+                piece = self.board[row][col]
+                if isinstance(piece, King) and piece.color == color:
+                    return (row, col)
+
+    def find_king_piece(self, color):
+        for row in range(8):
+            for col in range(8):
+                piece = self.board[row][col]
+                if isinstance(piece, King) and piece.color == color:
+                    return piece
+
     def __str__(self):
         # String representation of the chessboard
         board_str = ""
@@ -194,6 +300,7 @@ class GameController:
                     print("Invalid input. Enter values between 0 and 7.")
             except ValueError:
                 print("Invalid input. Enter values in the format 'row, col'.")
+
 
 if __name__ == "__main__":
     game = GameController()
