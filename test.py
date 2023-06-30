@@ -44,3 +44,19 @@ class ChessGameTest(unittest.TestCase):
         self.assertIsInstance(board[6][5], Pawn)
         self.assertIsInstance(board[6][6], Pawn)
         self.assertIsInstance(board[6][7], Pawn)
+
+    def test_piece_movement(self):
+        # Test the movement of chess pieces
+        # Create a custom chessboard configuration for testing purposes
+        self.board = Chessboard()
+        self.board.board[3][0] = Pawn("white")
+        self.board.board[2][0] = Rook("white")
+        self.board.board[2][6] = Pawn("white")
+        self.board.board[0][0] = None
+        self.board.board[1][0] = None
+        self.board.board[1][6] = None
+        self.assertFalse(self.board.move_piece((2, 0), (3, 0)))  # Invalid move (obstructed by own piece)
+
+        self.assertTrue(self.board.move_piece((2, 0), (2, 4)))  # Valid move
+        self.assertIsInstance(self.board.board[2][4], Rook)
+        self.assertIsNone(self.board.board[2][0])
