@@ -95,7 +95,30 @@ class Pawn(ChessPiece):
     
 class Chessboard:
     def __init__(self):
-
+        self.board = [[None for _ in range(8)] for _ in range(8)]
+        self.initialize_pieces()
     
-     def initialize_pieces(self):
-         
+    def initialize_pieces(self):
+        
+        self.board[0][4] = King("white")
+        self.board[7][4] = King("black")
+        self.board[0][3] = Queen("white")
+        self.board[7][3] = Queen("black")
+
+        self.board[0][0] = Rook("white")
+        self.board[0][7] = Rook("white")
+        self.board[7][0] = Rook("black")
+        self.board[7][7] = Rook("black")
+
+        self.board[0][1] = Knight("white")
+        self.board[0][6] = Knight("white")
+        self.board[7][1] = Knight("black")
+        self.board[7][6] = Knight("black")
+
+        self.board[0][2] = Bishop("white")
+        self.board[0][5] = Bishop("white")
+        self.board[7][2] = Bishop("black")
+        self.board[7][5] = Bishop("black")
+
+        self.board[1] = [Pawn("white") for _ in range(8)]
+        self.board[6] = [Pawn("black") for _ in range(8)]
