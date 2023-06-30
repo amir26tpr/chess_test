@@ -187,46 +187,8 @@ class Chessboard:
                                         break
                             if new_check:
                                 break
-        return True
-
-    def is_stalemate(self, color):
-        # Check if the current player is in stalemate
-        if self.is_check(color):
-            return False
-        king_position = self.find_king(color)
-        king_piece = self.find_king_piece(color)
-
-        # Check if the king can move out of stalemate
-        for row in range(-1, 2):
-            for col in range(-1, 2):
-                new_row = king_position[0] + row
-                new_col = king_position[1] + col
-                if 0 <= new_row < 8 and 0 <= new_col < 8:
-                    if king_piece.can_move(king_position, (new_row, new_col), self.board):
-                        for row in self.board:
-                            for piece in row:
-                                if piece and piece.color != color:
-                                    if not piece.can_move(piece.position, (new_row, new_col), self.board):
-                                        return False
+                        else:
                             return False
-
-        # Check if any piece can move legally
-        for row in self.board:
-            for piece in row:
-                if piece and piece.color == color:
-                    for row in range(8):
-                        for col in range(8):
-                            if piece.can_move(piece.position, (row, col), self.board):
-                                current_piece = self.board[row][col]
-                                self.board[row][col] = piece
-                                self.board[piece.position[0]][piece.position[1]] = None
-                                if not self.is_check(color):
-                                    self.board[row][col] = current_piece
-                                    self.board[piece.position[0]][piece.position[1]] = piece
-                                    return False
-                                self.board[row][col] = current_piece
-                                self.board[piece.position[0]][piece.position[1]] = piece
-
         return True
 
     def is_check(self, color):
@@ -274,10 +236,12 @@ class GameController:
 
     def play(self):
         while True:
-            print()
             print(self.board)
             print(f"It's {self.current_player}'s turn.")
             start = self.get_input("Enter the starting position (row, column): ")
+            if not self.board.board[start[0]][start[1]] or self.board.board[start[0]][start[1]].color != self.current_player:
+                print("Invalid move. Try again.")
+                continue
             end = self.get_input("Enter the ending position (row, column): ")
 
             if self.board.move_piece(start, end):
@@ -288,6 +252,10 @@ class GameController:
 
             else:
                 print("Invalid move. Try again.")
+
+            if self.board.is_checkmate(self.current_player):
+                print(f"Checkmate! {self.current_player} wins.")
+                break
 
     def get_input(self, message):
         while True:
