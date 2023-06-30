@@ -194,8 +194,3 @@ class GameController:
                     print("Invalid input. Enter values between 0 and 7.")
             except ValueError:
                 print("Invalid input. Enter values in the format 'row, col'.")
-
-
-if __name__ == "__main__":
-    game = GameController()
-    game.play()
